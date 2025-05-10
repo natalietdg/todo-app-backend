@@ -8,7 +8,7 @@ require('dotenv').config();
 module.exports = {
 
   test: {
-    client: 'postgresql',
+    client: 'pg',
     connection: {
       database: process.env.PGDATABASE,
       user:     process.env.PGUSER,
@@ -24,7 +24,7 @@ module.exports = {
   },
 
   development: {
-    client: 'postgresql',
+    client: 'pg',
     connection: {
       database: process.env.PGDATABASE,
       user:     process.env.PGUSER,
@@ -40,7 +40,7 @@ module.exports = {
   },
 
   staging: {
-    client: 'postgresql',
+    client: 'pg',
     connection: {
       database: 'my_db',
       user:     'username',
@@ -56,7 +56,7 @@ module.exports = {
   },
 
   production: {
-    client: 'postgresql',
+    client: 'pg',
     connection: process.env.DATABASE_URL,
     pool: {
       min: 2,
