@@ -1,3 +1,6 @@
+global.TextEncoder = require('util').TextEncoder;
+global.TextDecoder = require('util').TextDecoder;
+
 const app = require('./server-config.js');
 const routes = require('./server-routes.js');
 
@@ -25,7 +28,12 @@ app.get('/user/:id', routes.getUser);
 
 app.patch('/user/:id', routes.patchUser);
 app.patch('/delete-user/:id', routes.deleteUser);
+
 app.post('/list', routes.createList);
+app.get('/lists', routes.getAllLists);
+app.get('/list/:id', routes.getList);
+// app.patch('/list/:id', routes.patchList);
+// app.patch('/delete-list/:id', routes.deleteList);
 
 if (process.env.NODE_ENV !== 'test') {
   app.listen(port, () => console.log(`Listening on port ${port}`));

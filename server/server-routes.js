@@ -21,7 +21,7 @@ function createToDo(req, data) {
   return {
     title: data.title,
     order: data.order,
-    status: data.status ?? Status.ACTIVE,
+    status: data.status || Status.ACTIVE,
     completed: data.completed || false,
     url: `${protocol}://${host}/${id}`
   };
@@ -41,6 +41,24 @@ async function getTodo(req, res) {
 
 async function postTodo(req, res) {
   const { body } = req;
+  const { assignedTo, listId } = body;
+  // check if user is active / deleted
+
+  const user = await users.get(assignedTo)
+  console.log({user});
+  if(_.isUndefined(user) || user.status === 'inactive' || user.deleted) {
+    res.send({ error: "User is inactive or has been deleted" });
+    console.log({ error: "User is inactive or has been deleted"})
+  }
+  // check if list is deleted
+
+  const list = await lists.get(listId);
+
+  if (list.deleted || _.isUndefined(list)) {
+    res.send({ error: "List has been deleted" });
+    console.log({ error: "List has been deleted"})
+  }
+
   const created = await todos.create(body);
   return res.send(createToDo(req, created));
 }
@@ -142,6 +160,16 @@ async function deleteUser(req, res) {
 async function createList(req, res) {
   try {
     const { body } = req;
+    const { owner } = body;
+
+    // check if owner is deleted
+
+    const isOwnerDeleted = await users.get(owner, { deleted: true });
+    if (isOwnerDeleted) {
+      res.send({ error: "User has been deleted" });
+      console.log({ error: "User has been deleted"})
+    }
+
     const createdUser = await lists.create({
       ...body,
       id: nanoid()
@@ -153,6 +181,52 @@ async function createList(req, res) {
     res.send(error);
   }
 }
+
+async function getAllLists(req, res) {
+  try {
+    const { query } = req;
+    const listsResults = await lists.all(query);
+  
+    res.send(listsResults);
+  }
+  catch(error) {
+    console.log(error);
+
+    res.send({
+      ...error
+    })
+  }
+}
+
+async function getList(req, res) {
+  try {
+    const { params } = req;
+    const list = await lists.get(params.id)
+
+    res.send(list)
+  }
+  catch(error) {
+    console.log(error);
+    res.send({
+      ...error
+    })
+  }
+}
+
+async function patchList(req, res) {
+  try {
+    const { body, params } = req;
+
+    const patchedList = await lists.patch(params.id, body);
+
+    res.send(patchedList);
+  }
+  catch(error) {
+    console.log(error);
+    res.send(error);
+  }
+}
+
 
 const toExport = {
     getAllTodos: { method: getAllTodos, errorMessage: "Could not fetch all todos" },
@@ -167,6 +241,9 @@ const toExport = {
     patchUser: { method: patchUser, errorMessage: "Could not patch user"},
     deleteUser: { method: deleteUser, errorMessage: "Could not delete user"},
     createList: { method: createList, errorMessage: "Could not create user"},
+    getAllLists: { method: getAllLists, errorMessage: "Could not fetch all lists"},
+    getList: { method: getList, errorMessage: "Could not get list"},
+    patchList: { method: patchList, errorMessage: "Could not patch list"},
 }
 
 for (let route in toExport) {
