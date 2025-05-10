@@ -1,6 +1,9 @@
 {
   "name": "todo-backend-express-knex",
   "version": "1.0.0",
+  "jest": {
+    "setupFiles": ["<rootDir>/server/tests/jest.setup.js"]
+  },  
   "scripts": {
     "heroku-postbuild": "cd server && npx knex migrate:latest",
     "client": "cd client && yarn start",
