@@ -18,6 +18,14 @@ app.patch('/:id', routes.patchTodo);
 app.delete('/', routes.deleteAllTodos);
 app.delete('/:id', routes.deleteTodo);
 
+app.post('/user', routes.createUser);
+
+app.get('/users', routes.getAllUsers);
+app.get('/user/:id', routes.getUser);
+
+app.patch('/user/:id', routes.patchUser);
+app.patch('/delete-user/:id', routes.deleteUser);
+
 if (process.env.NODE_ENV !== 'test') {
   app.listen(port, () => console.log(`Listening on port ${port}`));
 }
