@@ -6,7 +6,8 @@ exports.up = function(knex) {
     return knex.schema.createTable('lists', function(table) {
       table.string('id');
       table.string('name');
-      table.foreign('id').references('users.id');
+      table.string('owner');
+      table.foreign('owner').references('id').inTable('users');
       table.boolean('deleted').defaultTo(false);
     })
   };
