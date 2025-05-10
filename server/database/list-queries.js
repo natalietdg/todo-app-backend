@@ -12,20 +12,20 @@ async function all(filters) {
 }
 
 async function create(payload) {
-    const results = await knex('users').insert(payload).returning('*');
+    const results = await knex('lists').insert(payload).returning('*');
 
     return results[0];
 }
 
-async function get(id) {
+async function get(id, filters) {
     // get all the tasks from todo table
     
-    const results = await knex('users').where({id});
+    const results = await knex('lists').where({id, ...filters});
     return results[0];
 }
 
 async function update(id, properties) {
-    const results = await knex('users').where({id}).update({...properties}).returning('*');
+    const results = await knex('lists').where({id}).update({...properties}).returning('*');
 
     return results[0];
 }
