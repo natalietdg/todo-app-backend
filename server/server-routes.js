@@ -1,6 +1,8 @@
 const _ = require('lodash');
 const todos = require('./database/todo-queries.js');
 const users = require('./database/user-queries.js');
+const lists = require('./database/list-queries.js');
+
 const { nanoid } = require('nanoid');
 
 const Status = {
@@ -137,6 +139,20 @@ async function deleteUser(req, res) {
     res.send(error);
   }
 }
+async function createList(req, res) {
+  try {
+    const { body } = req;
+    const createdUser = await lists.create({
+      ...body,
+      id: nanoid()
+    })
+    res.send(createdUser);
+  }
+  catch(error) {
+    console.log(error);
+    res.send(error);
+  }
+}
 
 const toExport = {
     getAllTodos: { method: getAllTodos, errorMessage: "Could not fetch all todos" },
@@ -149,7 +165,8 @@ const toExport = {
     getAllUsers: { method: getAllUsers, errorMessage: "Could not fetch all users"},
     getUser: { method: getUser, errorMessage: "Could not get user"},
     patchUser: { method: patchUser, errorMessage: "Could not patch user"},
-    deleteUser: { method: deleteUser, errorMessage: "Could not delete user"}
+    deleteUser: { method: deleteUser, errorMessage: "Could not delete user"},
+    createList: { method: createList, errorMessage: "Could not create user"},
 }
 
 for (let route in toExport) {

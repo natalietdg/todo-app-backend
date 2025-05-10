@@ -25,6 +25,7 @@ app.get('/user/:id', routes.getUser);
 
 app.patch('/user/:id', routes.patchUser);
 app.patch('/delete-user/:id', routes.deleteUser);
+app.post('/list', routes.createList);
 
 if (process.env.NODE_ENV !== 'test') {
   app.listen(port, () => console.log(`Listening on port ${port}`));
