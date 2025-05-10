@@ -3,6 +3,12 @@ const routes = require('./server-routes.js');
 
 const port = process.env.PORT || 5000;
 
+app.get('/health', (req, res) =>{
+  res.send({
+    up: true
+  })
+})
+
 app.get('/', routes.getAllTodos);
 app.get('/:id', routes.getTodo);
 

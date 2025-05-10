@@ -1,7 +1,17 @@
 const knex = require("./connection.js");
 
-async function all() {
-    return knex('todos');
+async function all(filters) {
+    const { deleted, status, listId, assignedTo, order, title} = filters;
+    console.log({title});
+    return knex('todos').where({
+        ...(order && { order }),
+        ...(deleted && { deleted }),
+        ...(status && { status }),
+        ...(listId && { listId }),
+        ...(assignedTo && { assignedTo })
+    }).modify((queryBuilder) => {
+        if(title) queryBuilder.whereLike('title', `%${title}%`)
+    });
 }
 
 async function get(id) {
@@ -9,8 +19,8 @@ async function get(id) {
     return results[0];
 }
 
-async function create(title, order) {
-    const results = await knex('todos').insert({ title, order }).returning('*');
+async function create(payload) {
+    const results = await knex('todos').insert(payload).returning('*');
     return results[0];
 }
 

@@ -1,21 +1,31 @@
 const _ = require('lodash');
 const todos = require('./database/todo-queries.js');
+const Status = {
+  ACTIVE: 'active',
+  IN_PROGRESS: 'in progress'
+}
 
 function createToDo(req, data) {
   const protocol = req.protocol, 
     host = req.get('host'), 
     id = data.id;
+    // status, listid, assignedto
+    // createList First
+    // if user exists
 
   return {
     title: data.title,
     order: data.order,
+    status: data.status ?? Status.ACTIVE,
     completed: data.completed || false,
     url: `${protocol}://${host}/${id}`
   };
 }
 
 async function getAllTodos(req, res) {
-  const allEntries = await todos.all();
+  const { query } = req;
+  
+  const allEntries = await todos.all(query);
   return res.send(allEntries.map( _.curry(createToDo)(req) ));
 }
 
